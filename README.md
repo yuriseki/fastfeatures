@@ -1,6 +1,6 @@
 # Fast-Features: A Modular Approach to FastAPI Development
 
-`fast-features` is a powerful toolkit for FastAPI projects designed to supercharge your FastAPI development with automatic discovery of project components. It generates a production-ready, modular project structure with a focus on **asynchronous database connections**, making it an ideal foundation for high-performance applications, including those integrating with Large Language Models (LLMs) and other async services. By handling the boilerplate, `fast-features` lets you focus on what matters: your application's logic.
+`fast-features` is a powerful toolkit designed to supercharge your FastAPI development. It provides automatic discovery of project components and generates a production-ready, modular project structure with a focus on **asynchronous database connections**. This makes it an ideal foundation for high-performance applications, including those integrating with Large Language Models (LLMs) and other async services. By handling the boilerplate, `fast-features` lets you focus on what matters: your application's logic.
 
 ## Core Concepts
 
@@ -18,7 +18,7 @@ FastAPI's dependency injection system is a core part of the generated code. It a
 
 ## Key Features
 
-*   **Project Init**: Kickstart your FastAPI project with a production-ready, modular structure in seconds.
+*   **Project Scaffolding**: Kickstart your FastAPI project with a production-ready, modular structure in seconds.
 *   **Feature Generation**: Accelerate your development workflow by generating new features with a single command.
 *   **Automatic Settings Generation**: Simplify your application's configuration with automatic settings generation from your `.env` file.
 *   **Automatic Route and Model Discovery**: `fast-features` automatically discovers your routes and models, reducing boilerplate and simplifying your application's setup.
@@ -62,6 +62,7 @@ poetry add fastfeatures
 ### Project Scaffolding (`ff-init`)
 
 To create a new FastAPI project, use the `ff-init` command. This command will prompt you for the project name and description and create a new project scaffold in the current directory.
+
 ```
 <PROJECT_NAME>/
 ├── .env
@@ -80,7 +81,6 @@ To create a new FastAPI project, use the `ff-init` command. This command will pr
 ```
 
 ### Feature Generation (`ff-feature`)
-
 A "feature" is a self-contained unit of functionality that encapsulates a specific part of your application's domain. Each feature has its own models, services, and routes, promoting a clean separation of concerns and making your code easier to understand and maintain.
 
 To generate a new feature, use the `ff-feature` command. This will create a new feature directory inside `app/features` with a predefined structure for models, routes, and services.
@@ -91,7 +91,7 @@ The generated files provide a solid starting point, but you'll want to customize
 
 *   **Models (`models/<feature_name>.py`):** The generated model is a `SQLModel` class. You can edit this file to define the fields and relationships for your model. For more information on creating and customizing `SQLModel` models, refer to the [official SQLModel documentation](https://sqlmodel.tiangolo.com/).
 
-*   **Routes (`routes.py`):** The generated routes are standard FastAPI `APIRouter` instances. You can add, remove, or modify the routes to expose the functionality you need. `fast-features` encourages you to keep the separation of concerns, providing a more granular routes declaration for each feature inside `app/features/<feature_name>/routes.py` To learn more about creating routes, handling requests, and using dependency injection in FastAPI, check out the [official FastAPI documentation](https://fastapi.tiangolo.com/).
+*   **Routes (`routes.py`):** The generated routes are standard FastAPI `APIRouter` instances. You can add, remove, or modify the routes to expose the functionality you need. `fast-features` encourages you to keep the separation of concerns by providing a more granular routes declaration for each feature inside `app/features/<feature_name>/routes.py`. To learn more about creating routes, handling requests, and using dependency injection in FastAPI, check out the [official FastAPI documentation](https://fastapi.tiangolo.com/).
 
 ```
 app/features/<feature_name>/
@@ -192,11 +192,9 @@ This tells Alembic to use the metadata from your `SQLModel` base class to detect
 
 **c) Configure the Asynchronous Engine and Execution:**
 
-Ensure your `run_migrations_online` function is defined as `async` and uses `create_async_engine` and `async with` for the connection. The `alembic init --template async` command should have set up a structure similar to this, but verify it matches:
+Ensure your `run_migrations_online` function is defined as `async` and uses `create_async_engine`. The `alembic init --template async` command should have set up a structure similar to this, but you should verify it. Locate the `run_migrations_online` function and ensure it looks like this:
 
 ```python
-# In your env.py, locate the run_migrations_online function.
-# It should look similar to this:
 async def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
     connectable = create_async_engine(
@@ -208,8 +206,11 @@ async def run_migrations_online() -> None:
         await connection.run_sync(do_run_migrations)
 
     await connectable.dispose()
+```
 
-# And in the main execution block at the end of env.py, ensure it's called with asyncio.run:
+Finally, ensure the main execution block at the end of `env.py` calls `run_migrations_online` with `asyncio.run`:
+
+```python
 if context.is_offline_mode():
     run_migrations_offline()
 else:
