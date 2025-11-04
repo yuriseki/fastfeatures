@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastfeatures import add_features_routes
-
 from app import features
 from app.core.settings import settings
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from fastfeatures import add_features_routes
 
 
 @asynccontextmanager

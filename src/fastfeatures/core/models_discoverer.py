@@ -35,7 +35,8 @@ def get_sql_models(features_module: ModuleType) -> List[str]:
             model_module = importlib.import_module(model_name)
             for attribute_name in dir(model_module):
                 model_class = getattr(model_module, attribute_name, None)
-                if isclass(model_class) and (issubclass(model_class, SQLModel) or issubclass(model_class, DeclarativeBase)):
+                if isclass(model_class) and (
+                        issubclass(model_class, SQLModel) or issubclass(model_class, DeclarativeBase)):
                     if hasattr(model_class, '__tablename__'):
                         print(model_class.__tablename__)
                         models.add(model_name)

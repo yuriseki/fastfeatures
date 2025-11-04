@@ -1,12 +1,10 @@
 """This module provides the service for the FeatureName feature."""
-from typing import List, Dict, Set, Generic, Type
+from typing import Type
 
-from sqlalchemy import func
-from sqlmodel import select, desc
-from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.lib.base_model_service import BaseModelService
 
 from ..models.feature_name import FeatureName, FeatureNameCreate, FeatureNameLoad, FeatureNameUpdate
+
 
 class FeatureNameService(BaseModelService[FeatureName, FeatureNameCreate, FeatureNameLoad, FeatureNameUpdate]):
     """The service for the FeatureName feature.

@@ -1,9 +1,12 @@
 """This module provides a CLI tool to generate a new FastAPI project scaffold."""
 import os
 import shutil
-import click
 from importlib.resources import files as resources_files
+
+import click
+
 from fastfeatures.core.generate_settings import _generate_settings_file
+
 
 def create_project_scaffold(project_name, project_description):
     """Creates the project scaffold.
@@ -73,6 +76,7 @@ def create_project_scaffold(project_name, project_description):
 
     return True
 
+
 @click.command()
 def generate_project_scaffolding_cli():
     """CLI tool to generate a new FastAPI project scaffold."""
@@ -81,7 +85,10 @@ def generate_project_scaffolding_cli():
 
     # Safety check: abort if 'app' folder already exists
     if os.path.exists(app_dir):
-        click.echo(f"Error: An 'app' directory already exists in the current directory ({project_root}). Aborting scaffolding to prevent data loss.", err=True)
+        click.echo(
+            f"Error: An 'app' directory already exists in the current directory ({project_root}). Aborting "
+            f"scaffolding to prevent data loss.",
+            err=True)
         return
 
     click.echo("This command will create a new FastAPI project scaffold in the current directory.")
@@ -99,9 +106,10 @@ def generate_project_scaffolding_cli():
         project_description = click.prompt('Project description', type=str)
         if not project_description:
             click.echo("Project description cannot be empty. Please provide a value.", err=True)
-    
+
     if create_project_scaffold(project_name, project_description):
         click.echo(f"Successfully created project scaffold for '{project_name}'")
+
 
 if __name__ == '__main__':
     generate_project_scaffolding_cli()

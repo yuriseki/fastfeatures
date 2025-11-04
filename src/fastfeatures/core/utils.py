@@ -1,9 +1,8 @@
 """This module provides utility functions for the fast-features package."""
-from types import ModuleType
-from typing import List
-import importlib
 import pkgutil
 import re
+from types import ModuleType
+from typing import List
 
 
 def get_features_packages(features_module: ModuleType, package_name: str, modules_only: bool = True) -> List[str]:

@@ -1,6 +1,6 @@
-"This module provides a CLI tool to generate a settings file from a .env file."
+"""This module provides a CLI tool to generate a settings file from a .env file."""
 import os
-import re
+
 import click
 from dotenv import dotenv_values
 
@@ -101,8 +101,6 @@ def _generate_settings_file(env_file, output_path, separator):
     grouped_vars = _group_variables(env_vars, separator)
 
     # Generate nested models
-
-
 
     # Generate the main Settings model and final output
     main_model_code = "class Settings(BaseSettings):\n"

@@ -1,7 +1,7 @@
 """This module defines the data models for the FeatureName feature."""
 from datetime import datetime, timezone
-from sqlmodel import SQLModel, Field, Relationship, Column, func
-from typing import TYPE_CHECKING, Optional
+
+from sqlmodel import SQLModel, Field, Column, func
 
 
 class FeatureNameBase(SQLModel):

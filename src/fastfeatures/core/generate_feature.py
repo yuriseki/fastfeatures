@@ -1,9 +1,11 @@
 """This module provides a CLI tool to generate a new feature."""
 import os
-import shutil
-import click
 import re
+import shutil
 from importlib.resources import files as resources_files
+
+import click
+
 
 def to_snake_case(name):
     """Converts a string to snake_case.
@@ -17,6 +19,7 @@ def to_snake_case(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower().replace(" ", "_").replace("-", "_")
 
+
 def to_pascal_case(name):
     """Converts a string to PascalCase.
 
@@ -27,6 +30,7 @@ def to_pascal_case(name):
         The PascalCased string.
     """
     return "".join(word.capitalize() for word in to_snake_case(name).split("_"))
+
 
 def to_camel_case(name):
     """Converts a string to camelCase.
@@ -40,6 +44,7 @@ def to_camel_case(name):
     snake_case = to_snake_case(name)
     parts = snake_case.split("_")
     return parts[0] + "".join(word.capitalize() for word in parts[1:])
+
 
 def create_feature(feature_name):
     """Creates a new feature.
@@ -62,7 +67,8 @@ def create_feature(feature_name):
 
     # Safety check: abort if feature directory already exists
     if os.path.exists(feature_dir):
-        click.echo(f"Error: A feature with the name '{feature_name}' already exists at {feature_dir}. Aborting.", err=True)
+        click.echo(f"Error: A feature with the name '{feature_name}' already exists at {feature_dir}. Aborting.",
+                   err=True)
         return
 
     # Copy template_feature
@@ -70,8 +76,10 @@ def create_feature(feature_name):
     shutil.copytree(template_dir, feature_dir)
 
     # Rename files
-    os.rename(os.path.join(feature_dir, 'models', 'feature_name.py'), os.path.join(feature_dir, 'models', f'{snake_case_name}.py'))
-    os.rename(os.path.join(feature_dir, 'services', 'feature_name_services.py'), os.path.join(feature_dir, 'services', f'{snake_case_name}_services.py'))
+    os.rename(os.path.join(feature_dir, 'models', 'feature_name.py'),
+              os.path.join(feature_dir, 'models', f'{snake_case_name}.py'))
+    os.rename(os.path.join(feature_dir, 'services', 'feature_name_services.py'),
+              os.path.join(feature_dir, 'services', f'{snake_case_name}_services.py'))
 
     # Replace placeholders
     for root, dirs, files in os.walk(feature_dir):
@@ -91,6 +99,7 @@ def create_feature(feature_name):
             with open(file_path, 'w') as f:
                 f.write(content)
 
+
 @click.command()
 def generate_feature_cli():
     """CLI tool to generate a new feature."""
@@ -102,6 +111,7 @@ def generate_feature_cli():
 
     create_feature(feature_name)
     click.echo(f"Successfully created feature '{feature_name}'")
+
 
 if __name__ == '__main__':
     generate_feature_cli()
