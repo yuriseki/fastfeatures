@@ -1,7 +1,12 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
+from fastfeatures import add_features_routes
+
+from app import features
 from app.core.settings import settings
+
 
 @asynccontextmanager
 async def life_span(app: FastAPI):
@@ -33,3 +38,5 @@ def read_root():
     Root endpoint for the {%PROJECT_NAME%}} API.
     """
     return {"message": "Welcome to {%PROJECT_NAME%}} API"}
+
+add_features_routes(app, features)

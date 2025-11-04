@@ -51,7 +51,6 @@ def create_project_scaffold(project_name, project_description):
 
     # Files to create
     files = {
-        os.path.join(project_root, 'main.py'): 'from app.main import app',
         os.path.join(app_dir, '__init__.py'): '',
         os.path.join(features_dir, '__init__.py'): '',
     }

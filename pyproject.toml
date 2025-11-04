@@ -1,6 +1,6 @@
 [project]
 name = "fastfeatures"
-version = "0.1.1"
+version = "0.1.2"
 description = "Modular features discovery system for FastAPI projects."
 authors = [
     {name = "Yuri Seki",email = "yuriseki@gmail.com"}
@@ -20,6 +20,10 @@ dependencies = [
     "setuptools (>=69.0.3,<70.0.0)",
     "python-dotenv (>=1.0.0,<2.0.0)",
     "alembic (>=1.17.1,<2.0.0)",
+    "uvicorn (>=0.38.0,<0.39.0)",
+    "pydantic-settings (>=2.11.0,<3.0.0)",
+    "aiosqlite (>=0.21.0,<0.22.0)",
+    "asyncpg (>=0.30.0,<0.31.0)",
 ]
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
