@@ -36,6 +36,7 @@ class FeatureNameUpdate(SQLModel):
 
     This schema is used in the update endpoint.
     """
+    id: int
     # This is an example field. Replace this with their actual feature fields.
     value: str | None = None
 
