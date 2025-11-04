@@ -1,1 +1,2 @@
-graft src/fastfeatures/template_base
+recursive-include src/fastfeatures/template_base *
+recursive-include src/fastfeatures/template_feature *

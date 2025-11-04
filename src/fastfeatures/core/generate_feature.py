@@ -2,7 +2,7 @@
 import os
 import shutil
 import click
-import pkg_resources
+from importlib.resources import files as resources_files
 
 def to_snake_case(name):
     """Converts a string to snake_case.
@@ -64,7 +64,7 @@ def create_feature(feature_name):
         return
 
     # Copy template_feature
-    template_dir = pkg_resources.resource_filename('fastfeatures', 'template_feature')
+    template_dir = str(resources_files('fastfeatures') / 'template_feature')
     shutil.copytree(template_dir, feature_dir)
 
     # Rename files
@@ -74,9 +74,15 @@ def create_feature(feature_name):
     # Replace placeholders
     for root, dirs, files in os.walk(feature_dir):
         for file in files:
+            if file.endswith('.pyc'):
+                continue
             file_path = os.path.join(root, file)
-            with open(file_path, 'r') as f:
-                content = f.read()
+            try:
+                with open(file_path, 'r') as f:
+                    content = f.read()
+            except UnicodeDecodeError:
+                click.echo(f"Warning: Could not decode file {file_path} as UTF-8. Skipping.", err=True)
+                continue
             content = content.replace('feature_name', snake_case_name)
             content = content.replace('FeatureName', pascal_case_name)
             content = content.replace('featureName', camel_case_name)

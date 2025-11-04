@@ -2,7 +2,7 @@
 import os
 import shutil
 import click
-import pkg_resources
+from importlib.resources import files as resources_files
 from fastfeatures.core.generate_settings import _generate_settings_file
 
 def create_project_scaffold(project_name, project_description):
@@ -21,7 +21,7 @@ def create_project_scaffold(project_name, project_description):
     app_dir = os.path.join(project_root, 'app')
 
     # Copy template_base
-    template_dir = pkg_resources.resource_filename('fastfeatures', 'template_base')
+    template_dir = str(resources_files('fastfeatures') / 'template_base')
     app_template_dir = os.path.join(template_dir, 'app')
     env_template_file = os.path.join(template_dir, 'env_template')
 
@@ -32,9 +32,15 @@ def create_project_scaffold(project_name, project_description):
     # Replace placeholders
     for root, dirs, files in os.walk(app_dir):
         for file in files:
+            if file.endswith('.pyc'):
+                continue
             file_path = os.path.join(root, file)
-            with open(file_path, 'r') as f:
-                content = f.read()
+            try:
+                with open(file_path, 'r') as f:
+                    content = f.read()
+            except UnicodeDecodeError:
+                click.echo(f"Warning: Could not decode file {file_path} as UTF-8. Skipping.", err=True)
+                continue
             content = content.replace('{%PROJECT_NAME%}', project_name)
             content = content.replace('{%PROJECT_DESCRIPTION%}', project_description)
             with open(file_path, 'w') as f:
