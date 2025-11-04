@@ -23,10 +23,11 @@ def create_project_scaffold(project_name, project_description):
     # Copy template_base
     template_dir = pkg_resources.resource_filename('fastfeatures', 'template_base')
     app_template_dir = os.path.join(template_dir, 'app')
-    env_template_file = os.path.join(template_dir, '.env')
+    env_template_file = os.path.join(template_dir, 'env_template')
 
     shutil.copytree(app_template_dir, app_dir, dirs_exist_ok=True)
     shutil.copy(env_template_file, project_root)
+    os.rename(os.path.join(project_root, 'env_template'), os.path.join(project_root, '.env'))
 
     # Replace placeholders
     for root, dirs, files in os.walk(app_dir):

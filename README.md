@@ -50,6 +50,7 @@ poetry add fastfeatures
    ```
 
 3. **Enable route discovery in `app/main.py`:**
+It is already enabled by default if you used `fastfeatures-scaffold` command.
 
    ```python
    from fastfeatures.core.routes_discoverer import add_features_routes

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="fastfeatures",
-    version="0.1.3",
+    version="0.1.4",
     description="Modular features discovery system for FastAPI projects.",
     author="Yuri Seki",
     author_email="yuriseki@gmail.com",
