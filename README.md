@@ -183,65 +183,142 @@ A "feature" is a self-contained unit of functionality that encapsulates a specif
 
 By organizing your code into features, you can build complex applications in a more structured and maintainable way.
 
-## Alembic Integration
+## Alembic Integration for Database Migrations
 
-To use Alembic with `fast-features`, you need to configure your `migrations/env.py` file to automatically discover your models.
+`fast-features` is designed to work seamlessly with Alembic for handling database migrations. By leveraging automatic model discovery, you can keep your database schema in sync with your models with minimal effort.
 
-1. In your `.env` file, update the `DATABASE_URL` with the correct database url. In this example we will use SQLite and `my_database.db` in the application root for demonstrations purposes. This is the default sample configuration.
+Here's a step-by-step guide to setting up and using Alembic in your `fast-features` project:
 
-2. Create the `my_database.db` file:
+### 1. Set up Your Database
+
+Before you can run migrations, you need a database. For this guide, we'll use a simple SQLite database, which is a single file on your filesystem.
+
+**a) Configure the Database URL:**
+
+In your `.env` file, make sure the `DATABASE_URL` is set correctly. For a SQLite database named `my_database.db` in your project's root directory, the URL should look like this:
+
+```
+DATABASE_URL="sqlite+aiosqlite:///my_database.db"
+```
+
+**b) Create the Database File:**
+
+While SQLAlchemy will create the database file for you when the application runs, it's good practice to create it manually before running migrations. This ensures that the file exists with the correct permissions and ownership in your project directory.
+
+Create an empty `my_database.db` file in your project's root directory with the `touch` command:
+
 ```bash
 touch my_database.db
 ```
 
-3. Initiate the async alembic migrations with
+### 2. Initialize Alembic
+
+With your database file in place, you can now initialize Alembic. Use the `async` template, as your application's database connection is asynchronous.
+
 ```bash
 alembic init --template async migrations
 ```
-4. Configure `alembic` to recognize the models in the project structure.  
-Open `migrations/env.py` file, created by alembic, and insert add the following code to your `migrations/env.py` file, just after the original `config = context.config` line:
+
+This command creates a `migrations` directory with the necessary configuration files.
+
+### 3. Configure `migrations/env.py` for Asynchronous Operations
+
+Next, you need to configure Alembic to discover your application's models and use the correct asynchronous database connection. Open the `migrations/env.py` file and make the following changes:
+
+**a) Import Modules and Discover Models:**
+
+Add the following imports at the top of your `env.py` file:
 
 ```python
-#### BEGIN OF CUSTOM CODE ####
+import asyncio
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import SQLModel
 from app.core.settings import settings
 from fastfeatures import get_sql_models
 from app import features
+```
 
+Then, just after the line `config = context.config`, add the following code. This will discover all the SQL models from your features and set the database URL for Alembic.
+
+```python
+#### BEGIN OF CUSTOM CODE ####
+# Discover all SQL models from the features module
 get_sql_models(features)
+
+# Set the database URL for Alembic
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 #### END OF CUSTOM CODE ####
 ```
 
-Update the `target_metadata = None` to 
+**b) Set the `target_metadata`:**
+
+Find the line `target_metadata = None` and change it to:
+
 ```python
 target_metadata = SQLModel.metadata
 ```
 
-5. Additionally, to ensure Alembic correctly recognizes `SQLModel` definitions during autogeneration, you need to modify the `script.py.mako` template. Locate your `migrations/script.py.mako` file and add the following line to its import section:
+This tells Alembic to use the metadata from your `SQLModel` base class to detect changes in your models.
+
+**c) Configure the Asynchronous Engine and Execution:**
+
+Ensure your `run_migrations_online` function is defined as `async` and uses `create_async_engine` and `async with` for the connection. The `alembic init --template async` command should have set up a structure similar to this, but verify it matches:
+
+```python
+# In your env.py, locate the run_migrations_online function.
+# It should look similar to this:
+async def run_migrations_online() -> None:
+    """Run migrations in 'online' mode."""
+    connectable = create_async_engine(
+        config.get_main_option("sqlalchemy.url"),
+        # Add any other engine options here if needed, e.g., poolclass=pool.NullPool
+    )
+
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+
+    await connectable.dispose()
+
+# And in the main execution block at the end of env.py, ensure it's called with asyncio.run:
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    asyncio.run(run_migrations_online())
+```
+
+### 4. Update Alembic Template for SQLModel
+
+To ensure Alembic correctly recognizes `SQLModel` definitions during autogeneration, it's a good practice to add `import sqlmodel` to the migration script template.
+
+Open `migrations/script.py.mako` and add the following to the import section:
 
 ```python
 import sqlmodel
 ```
 
-6. Create a feature using `fastfeatures-feature`
-```
-$ fastfeatures-feature
-Feature name: User
-Successfully created feature 'User'
+### 5. Generate Your First Migration
+
+Now you're ready to generate a migration. If you haven't already, create a feature with a model:
+
+```bash
+fastfeatures-feature
 ```
 
-7. Create the migration for the previously created feature.
+Then, run the following command to have Alembic automatically generate a migration script based on your models:
+
 ```bash
 alembic revision --autogenerate -m "Initial migration"
 ```
 
-8. Execute the migration to create/update the database tables.
+### 6. Apply the Migration
+
+Finally, apply the migration to your database to create the tables:
+
 ```bash
 alembic upgrade head
 ```
 
-More about alembic: https://alembic.sqlalchemy.org/en/latest/tutorial.html
+That's it! You have successfully set up Alembic to manage your database migrations in your `fast-features` project. For more information on Alembic, you can refer to the [official tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html).
 
 ## License
 
