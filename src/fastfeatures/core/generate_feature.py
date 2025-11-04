@@ -2,6 +2,7 @@
 import os
 import shutil
 import click
+import re
 from importlib.resources import files as resources_files
 
 def to_snake_case(name):
@@ -13,7 +14,8 @@ def to_snake_case(name):
     Returns:
         The snake_cased string.
     """
-    return name.lower().replace(" ", "_").replace("-", "_")
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower().replace(" ", "_").replace("-", "_")
 
 def to_pascal_case(name):
     """Converts a string to PascalCase.
