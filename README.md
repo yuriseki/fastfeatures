@@ -1,25 +1,27 @@
 # Fast-Features: A Modular Approach to FastAPI Development
 
-`fastfeatures` is a powerful toolkit for FastAPI projects designed to accelerate development by providing scaffolding, feature generation, and automatic discovery of project components. It promotes a modular and organized project structure, allowing developers to focus on business logic rather than boilerplate code.
+`fast-features` is a powerful toolkit for FastAPI projects designed to supercharge your FastAPI development with automatic discovery of project components. It generates a production-ready, modular project structure with a focus on **asynchronous database connections**, making it an ideal foundation for high-performance applications, including those integrating with Large Language Models (LLMs) and other async services. By handling the boilerplate, `fast-features` lets you focus on what matters: your application's logic.
 
-## Why a Modular Structure?
+## Core Concepts
 
-As applications grow, maintaining a single, monolithic codebase becomes increasingly challenging. A modular, feature-based architecture offers several advantages:
+### Modular, Feature-Based Architecture
 
-* **Scalability**: By organizing your code into self-contained features, you can easily scale your application by adding, removing, or modifying features without affecting other parts of the system.
-* **Maintainability**: A modular structure makes it easier to understand, debug, and test your code. Each feature has a clear responsibility, reducing cognitive load and simplifying maintenance.
-* **Separation of Concerns**: By separating your application into distinct features, you enforce a clean separation of concerns, leading to more robust and reliable code.
-* **Team Collaboration**: A modular architecture allows multiple developers to work on different features simultaneously with minimal conflicts, improving team productivity.
+`fast-features` promotes a feature-based architecture. A 'feature' is a self-contained unit of functionality (e.g., 'users', 'products', 'orders') that encapsulates its own models, routes, and services. This separation of concerns leads to a more organized, scalable, and maintainable codebase.
 
-`fast-features` is designed to help you achieve these benefits by providing a solid foundation for building modular FastAPI applications.
+### Async-First for Modern Applications
+
+The generated boilerplate is built around asynchronous database connections from the ground up. This is crucial for modern web applications that need to handle concurrent requests efficiently without blocking. This async-first approach makes `fast-features` particularly well-suited for applications that interact with other asynchronous services, such as LLMs, external APIs, or message queues.
+
+### Dependency Injection in FastAPI
+
+FastAPI's dependency injection system is a core part of the generated code. It allows you to declare dependencies (like a database session) that your route functions need to operate. FastAPI takes care of creating and managing these dependencies for you. For example, the `get_session` dependency provides a database session to your routes, ensuring that each request has a clean, isolated session to work with. This is a powerful feature that makes your code more reusable and easier to test.
 
 ## Key Features
 
-* **Project Scaffolding**: Kickstart your FastAPI project with a production-ready, modular structure in seconds. The `fastfeatures-scaffold` command generates a new project with a logical directory structure, including a core application setup and an empty `features` directory, ready for you to start building.
-* **Feature Generation**: Accelerate your development workflow by generating new features with a single command. The `fastfeatures-feature` command creates a new feature with a predefined structure, including models, services, and routes, so you can focus on implementing the business logic.
-* **Automatic Settings Generation**: Simplify your application's configuration with automatic settings generation. The `fastfeatures-settings` command generates a Pydantic `settings.py` file from your `.env` file, with support for nested settings, providing a type-safe and organized way to manage your application's configuration.
-* **Automatic Route Discovery**: `fast-features` automatically discovers and includes `APIRouter` instances from your features, so you don't have to manually wire up your routes. This reduces boilerplate code and ensures that your routes are always up-to-date.
-* **Automatic Model Discovery**: `fast-features` automatically discovers your `SQLModel` and `SQLAlchemy` models, making it easy to work with your database and ensuring that your models are always available when you need them.
+*   **Project Init**: Kickstart your FastAPI project with a production-ready, modular structure in seconds.
+*   **Feature Generation**: Accelerate your development workflow by generating new features with a single command.
+*   **Automatic Settings Generation**: Simplify your application's configuration with automatic settings generation from your `.env` file.
+*   **Automatic Route and Model Discovery**: `fast-features` automatically discovers your routes and models, reducing boilerplate and simplifying your application's setup.
 
 ## Installation
 
@@ -37,48 +39,29 @@ poetry add fastfeatures
 
 ## Getting Started
 
-1. **Create a new project:**
+1.  **Create a new project:**
 
-   ```bash
-   fastfeatures-scaffold
-   ```
+    ```bash
+    ff-init
+    ```
 
-2. **Generate a new feature:**
+2.  **Generate a new feature:**
 
-   ```bash
-   fastfeatures-feature
-   ```
+    ```bash
+    ff-feature
+    ```
 
-3. **Enable route discovery in `app/main.py`:**
-It is already enabled by default if you used `fastfeatures-scaffold` command.
+3.  **Run your application:**
 
-   ```python
-   from fastfeatures.core.routes_discoverer import add_features_routes
-   from app import features
-
-   # ... (existing app setup)
-
-   add_features_routes(app, features)
-   ```
-
-4. **Run your application:**
-
-   ```bash
-   uvicorn main:app --reload
-   ```
+    ```bash
+    uvicorn main:app --reload
+    ```
 
 ## Usage
 
-### Project Scaffolding
+### Project Scaffolding (`ff-init`)
 
-To create a new FastAPI project, use the `fastfeatures-scaffold` command. This command will prompt you for the project name and description.
-
-```bash
-fastfeatures-scaffold
-```
-
-This will create a new project scaffold in the current directory with the following structure:
-
+To create a new FastAPI project, use the `ff-init` command. This command will prompt you for the project name and description and create a new project scaffold in the current directory.
 ```
 <PROJECT_NAME>/
 ├── .env
@@ -96,15 +79,19 @@ This will create a new project scaffold in the current directory with the follow
     └── main.py
 ```
 
-### Feature Generation
+### Feature Generation (`ff-feature`)
 
-To generate a new feature, use the `fastfeatures-feature` command. This command will prompt you for the feature name.
+A "feature" is a self-contained unit of functionality that encapsulates a specific part of your application's domain. Each feature has its own models, services, and routes, promoting a clean separation of concerns and making your code easier to understand and maintain.
 
-```bash
-fastfeatures-feature
-```
+To generate a new feature, use the `ff-feature` command. This will create a new feature directory inside `app/features` with a predefined structure for models, routes, and services.
 
-This will create a new feature directory inside `app/features` with the following structure:
+**Customizing Your Feature**
+
+The generated files provide a solid starting point, but you'll want to customize them to fit your needs.
+
+*   **Models (`models/<feature_name>.py`):** The generated model is a `SQLModel` class. You can edit this file to define the fields and relationships for your model. For more information on creating and customizing `SQLModel` models, refer to the [official SQLModel documentation](https://sqlmodel.tiangolo.com/).
+
+*   **Routes (`routes.py`):** The generated routes are standard FastAPI `APIRouter` instances. You can add, remove, or modify the routes to expose the functionality you need. `fast-features` encourages you to keep the separation of concerns, providing a more granular routes declaration for each feature inside `app/features/<feature_name>/routes.py` To learn more about creating routes, handling requests, and using dependency injection in FastAPI, check out the [official FastAPI documentation](https://fastapi.tiangolo.com/).
 
 ```
 app/features/<feature_name>/
@@ -118,70 +105,13 @@ app/features/<feature_name>/
     └── <feature_name>_services.py
 ```
 
-### Settings Generation
+### Settings Generation (`ff-settings`)
 
-To generate a `settings.py` file from your `.env` file, use the `fastfeatures-settings` command.
+To generate a `settings.py` file from your `.env` file, use the `ff-settings` command.
 
 ```bash
-fastfeatures-settings --env-file=.env --output-path=app/core/settings.py
+ff-settings --env-file=.env --output-path=app/core/settings.py
 ```
-
-This will generate a `settings.py` file with nested Pydantic models. For example:
-
-```python
-# THIS FILE IS AUTO-GENERATED...
-
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
-
-class Settings(BaseSettings):
-    DATABASE_URL: str
-    DEV_MODE: bool = False
-
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore",
-    )
-
-
-settings = Settings()
-```
-
-### Route Discovery
-
-To automatically discover and include all the `APIRouter` instances from your features, add the following to your `app/main.py`:
-
-```python
-from fastfeatures.core.routes_discoverer import add_features_routes
-from app import features
-
-# ... (existing app setup)
-
-add_features_routes(app, features)
-```
-
-### Model Discovery
-
-To automatically discover all your `SQLModel` and `SQLAlchemy` models, you can use the `get_sql_models` function. This is particularly useful for database migrations with Alembic.
-
-```python
-from fastfeatures.core.models_discoverer import get_sql_models
-from app import features
-
-# Discover all SQL models from the features module
-sql_models = get_sql_models(features)
-```
-
-## The "Features" Concept
-
-A "feature" is a self-contained unit of functionality that encapsulates a specific part of your application's domain. Each feature has its own models, services, and routes, promoting a clean separation of concerns and making your code easier to understand and maintain.
-
-* **`models`**: This directory contains the data models for your feature, defined using `SQLModel` or `SQLAlchemy`.
-* **`routes`**: This directory contains the API routes for your feature, defined using `FastAPI`'s `APIRouter`.
-* **`services`**: This directory contains the business logic for your feature, which is used by the routes to interact with the models and perform actions.
-
-By organizing your code into features, you can build complex applications in a more structured and maintainable way.
 
 ## Alembic Integration for Database Migrations
 
@@ -301,7 +231,7 @@ import sqlmodel
 Now you're ready to generate a migration. If you haven't already, create a feature with a model:
 
 ```bash
-fastfeatures-feature
+ff-feature
 ```
 
 Then, run the following command to have Alembic automatically generate a migration script based on your models:
