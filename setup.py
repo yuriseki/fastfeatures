@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="fastfeatures",
-    version="0.1.4",
+    version="0.1.5",
     description="Modular features discovery system for FastAPI projects.",
     author="Yuri Seki",
     author_email="yuriseki@gmail.com",
@@ -14,7 +14,7 @@ setup(
         "sqlalchemy>=2.0.44,<3.0.0",
         "sqlmodel>=0.0.27,<0.0.28",
         "click>=8.1.7,<9.0.0",
-        "setuptools>=69.0.3,<70.0.0",
+        "setuptools>=80.9.0,<90.0.0",
         "python-dotenv>=1.0.0,<2.0.0",
         "alembic>=1.17.1,<2.0.0",
         "uvicorn>=0.38.0,<0.39.0",
