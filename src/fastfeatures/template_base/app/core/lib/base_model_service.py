@@ -79,6 +79,9 @@ class BaseModelService(Generic[ModelType, CreateSchemaType, LoadSchemaType, Upda
         Returns:
             The updated model instance as a load schema.
         """
+        result = await session.execute(select(self.model).where(self.model.id == db_obj.id))
+        db_obj = result.scalar_one_or_none()
+
         for field, value in obj_in.model_dump(exclude_unset=True).items():
             setattr(db_obj, field, value)
         session.add(db_obj)
@@ -93,5 +96,7 @@ class BaseModelService(Generic[ModelType, CreateSchemaType, LoadSchemaType, Upda
             session: The database session.
             db_obj: The model instance to delete.
         """
+        result = await session.execute(select(self.model).where(self.model.id == db_obj.id))
+        db_obj = result.scalar_one_or_none()
         await session.delete(db_obj)
         await session.commit()

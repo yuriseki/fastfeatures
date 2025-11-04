@@ -46,7 +46,7 @@ def to_camel_case(name):
     return parts[0] + "".join(word.capitalize() for word in parts[1:])
 
 
-def create_feature(feature_name):
+def create_feature(feature_name) -> bool:
     """Creates a new feature.
 
     This function copies the template_feature directory to a new feature directory
@@ -69,7 +69,7 @@ def create_feature(feature_name):
     if os.path.exists(feature_dir):
         click.echo(f"Error: A feature with the name '{feature_name}' already exists at {feature_dir}. Aborting.",
                    err=True)
-        return
+        return False
 
     # Copy template_feature
     template_dir = str(resources_files('fastfeatures') / 'template_feature')
@@ -99,6 +99,8 @@ def create_feature(feature_name):
             with open(file_path, 'w') as f:
                 f.write(content)
 
+    return True
+
 
 @click.command()
 def generate_feature_cli():
@@ -109,9 +111,13 @@ def generate_feature_cli():
         if not feature_name:
             click.echo("Feature name cannot be empty. Please provide a value.", err=True)
 
-    create_feature(feature_name)
-    click.echo(f"Successfully created feature '{feature_name}'")
-
+    if create_feature(feature_name):
+        click.echo(f"Successfully created feature '{feature_name}'")
+    else:
+        click.echo(
+            message=f"Error creating feature '{feature_name}'",
+            err = True,
+        )
 
 if __name__ == '__main__':
     generate_feature_cli()

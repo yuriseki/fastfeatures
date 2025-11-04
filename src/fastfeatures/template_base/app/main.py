@@ -14,14 +14,13 @@ async def life_span(app: FastAPI):
     yield
     print(f"Server has been stopped.")
 
+
 app = FastAPI(
     title="{%PROJECT_NAME%}",
     version="0.1.0",
     description="{%PROJECT_DESCRIPTION%}",
     lifespan=life_span,
 )
-
-print(settings.ALLOW_ORIGINS)
 
 # Add middleware to prevent CORS issues
 app.add_middleware(
@@ -32,11 +31,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def read_root():
     """
     Root endpoint for the {%PROJECT_NAME%}} API.
     """
     return {"message": "Welcome to {%PROJECT_NAME%}} API"}
+
 
 add_features_routes(app, features)

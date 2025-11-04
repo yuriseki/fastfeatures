@@ -187,25 +187,61 @@ By organizing your code into features, you can build complex applications in a m
 
 To use Alembic with `fast-features`, you need to configure your `migrations/env.py` file to automatically discover your models.
 
-Add the following code to your `migrations/env.py` file, just after the original `config = context.config` line:
+1. In your `.env` file, update the `DATABASE_URL` with the correct database url. In this example we will use SQLite and `my_database.db` in the application root for demonstrations purposes. This is the default sample configuration.
+
+2. Create the `my_database.db` file:
+```bash
+touch my_database.db
+```
+
+3. Initiate the async alembic migrations with
+```bash
+alembic init --template async migrations
+```
+4. Configure `alembic` to recognize the models in the project structure.  
+Open `migrations/env.py` file, created by alembic, and insert add the following code to your `migrations/env.py` file, just after the original `config = context.config` line:
 
 ```python
 #### BEGIN OF CUSTOM CODE ####
 from sqlmodel import SQLModel
-from app.core.settings import Settings
+from app.core.settings import settings
 from fastfeatures import get_sql_models
 from app import features
 
 get_sql_models(features)
-config.set_main_option("sqlalchemy.url", Settings.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 #### END OF CUSTOM CODE ####
 ```
 
-Additionally, to ensure Alembic correctly recognizes `SQLModel` definitions during autogeneration, you need to modify the `script.py.mako` template. Locate your `migrations/script.py.mako` file and add the following line to its import section:
+Update the `target_metadata = None` to 
+```python
+target_metadata = SQLModel.metadata
+```
+
+5. Additionally, to ensure Alembic correctly recognizes `SQLModel` definitions during autogeneration, you need to modify the `script.py.mako` template. Locate your `migrations/script.py.mako` file and add the following line to its import section:
 
 ```python
-from sqlmodel import SQLModel
+import sqlmodel
 ```
+
+6. Create a feature using `fastfeatures-feature`
+```
+$ fastfeatures-feature
+Feature name: User
+Successfully created feature 'User'
+```
+
+7. Create the migration for the previously created feature.
+```bash
+alembic revision --autogenerate -m "Initial migration"
+```
+
+8. Execute the migration to create/update the database tables.
+```bash
+alembic upgrade head
+```
+
+More about alembic: https://alembic.sqlalchemy.org/en/latest/tutorial.html
 
 ## License
 

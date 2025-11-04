@@ -21,3 +21,5 @@ class FeatureNameService(BaseModelService[FeatureName, FeatureNameCreate, Featur
             update_schema: The FeatureNameUpdate schema.
         """
         super().__init__(model, create_schema, load_schema, update_schema)
+        # The base BaseModelService includes a basic CRUD operation.
+        # Feel free to override its functionality for more complex use cases.

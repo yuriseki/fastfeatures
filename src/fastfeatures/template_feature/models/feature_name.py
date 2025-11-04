@@ -1,6 +1,7 @@
 """This module defines the data models for the FeatureName feature."""
 from datetime import datetime, timezone
-
+from typing import Optional
+import sqlalchemy as sa
 from sqlmodel import SQLModel, Field, Column, func
 
 
@@ -13,14 +14,9 @@ class FeatureName(FeatureNameBase, table=True):
     """Represents the FeatureName table in the database."""
     id: int | None = Field(primary_key=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime | None = Field(
-        sa_column=Column(
-            "updated_at",
-            default=func.now(),
-            onupdate=func.now(),
-        )
-    )
-
+    updated_at: datetime | None = Field(default_factory=lambda: datetime.now(timezone.utc))
+    # This is an example field. Replace this with their actual feature fields.
+    value: str | None = None
 
 class FeatureNameCreate(FeatureNameBase):
     """Schema for creating a new FeatureName.
@@ -36,7 +32,6 @@ class FeatureNameUpdate(SQLModel):
 
     This schema is used in the update endpoint.
     """
-    id: int
     # This is an example field. Replace this with their actual feature fields.
     value: str | None = None
 
